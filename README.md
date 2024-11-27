@@ -1,6 +1,6 @@
 # Async task management
 
-A Swift package providing tools and types for managing asynchronous tasks. This package is designed to simplify the handling of cancellable asynchronous operations in SwiftUI applications by offering reusable view models and patterns.
+It's a start of the Swift package providing tools and types for managing asynchronous tasks. This package is designed to simplify the handling of cancellable asynchronous operations in SwiftUI applications by offering reusable view models and patterns.
 
 ## SwiftUI example of using package
 [async-location-swift-example](https://github.com/The-Igor/async-location-swift-example)
