@@ -1,5 +1,7 @@
 # Async task management
 
+### Please star the repository if you believe continuing the development of this package is worthwhile. This will help me understand which package deserves more effort.
+
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Figor11191708%2Fasync-task%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/igor11191708/async-task)
 
 It's a start of the Swift package providing tools and types for managing asynchronous tasks. This package is designed to simplify the handling of cancellable asynchronous operations in SwiftUI applications by offering reusable view models and patterns.
