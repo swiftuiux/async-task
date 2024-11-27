@@ -15,7 +15,7 @@ import SwiftUI
 ///
 /// - Note: The class is marked as `@MainActor` to ensure all interactions occur on the main thread.
 @MainActor
-@available(iOS 14.0, watchOS 7.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public final class SingleTaskViewModel<V: Sendable, E: Error>: ObservableObject {
 
     /// A type alias for the asynchronous operation to be performed.
