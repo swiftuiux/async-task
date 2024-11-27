@@ -31,13 +31,13 @@ public final class SingleTaskViewModel<V: Sendable, E: Error>: ObservableObject 
     // MARK: - Public Properties
 
     /// The current error encountered during the operation, if any.
-    @Published private(set) var error: E?
+    @Published public private(set) var error: E?
 
     /// The current value produced by the operation, if any.
-    @Published private(set) var value: V?
+    @Published public private(set) var value: V?
 
     /// A Boolean indicating whether the operation is currently active.
-    @Published var isActive = false
+    @Published public private(set)  var isActive = false
 
     // MARK: - Private Properties
 
