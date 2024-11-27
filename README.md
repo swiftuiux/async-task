@@ -1,4 +1,4 @@
-# Async task management
+# Async task kit
 
 ### Please star the repository if you believe continuing the development of this package is worthwhile. This will help me understand which package deserves more effort.
 
