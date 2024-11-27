@@ -73,9 +73,10 @@ public final class SingleTaskViewModel<V: Sendable, E: Error>: ObservableObject 
                 value = try await operation()
             } catch {
                 handle(error)
+                cancel()
             }
 
-            cancel()
+            isActive = false
 
             return value
         }
