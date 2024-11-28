@@ -77,13 +77,11 @@ extension Async {
         ///
         /// This method stops the task, resets its reference, and updates the state to `.idle`.
         public func cancel() {
-            state = .idle
-            
             if let task {
                 task.cancel()
+                self.task = nil
             }
-            
-            task = nil
+            state = .idle
         }
         
         /// Starts an asynchronous operation without requiring input.
@@ -121,11 +119,12 @@ extension Async {
         /// - Note: Both `I` (input type) and `V` (output type) must conform to `Sendable` to ensure thread safety
         ///         when used in Swift's concurrency model. Additionally, developers should ensure that `input`
         ///         and its nested types are safe to use concurrently if modifications are possible.
+        ///         If input is a value type, it’s already copied when passed to the closure.
+        ///         If input is a reference type and you need deep immutability, consider enforcing immutability at the type definition level.
         @MainActor
         public func start<I: Sendable>(with input: I, operation: @escaping Mapper<I, V>) {
             startTask {
-                let value = input
-                return try await operation(value)
+                return try await operation(input)
             }
         }
        
@@ -146,15 +145,19 @@ extension Async {
             clean() // Reset the current state before starting the task.
             state = .active // Mark the task as active.
 
-            task = Task {
+            task = Task { @MainActor in
+                
+                defer {
+                        state = .idle
+                        task = nil
+                    }
+                
                 do {
                     value = try await operation() // Execute the asynchronous operation and store the result.
                 } catch {
-                    handle(error) // Process any errors encountered during execution.
-                    cancel() // Reset the state by cancelling the task.
+                    handle(error)
                 }
-
-                state = .idle // Mark the task as idle once it completes.
+                
                 return value
             }
         }
