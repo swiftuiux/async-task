@@ -4,7 +4,7 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Figor11191708%2Fasync-task%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/igor11191708/async-task)
 
-**Async Task Kit** is a Swift package designed to simplify the management of cancellable asynchronous tasks. It provides reusable tools and patterns for handling operations in SwiftUI applications, making it easier to integrate reactive workflows.
+**Async Task Kit** is a Swift package designed to simplify the management of cancellable asynchronous tasks. It provides reusable tools and patterns for handling asynchronous operations in SwiftUI applications.
 
 ---
 
@@ -74,7 +74,6 @@ struct FetchDataView: View {
     }
 
     /// Simulates an asynchronous data fetch.
-    /// - Returns: A string result after a delay.
     private func performAsyncFetch() async throws -> String {
         try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // Simulate a 2-second delay
         return "Hello, Async Task!"
@@ -111,8 +110,6 @@ struct ProcessInputView: View {
     }
 
     /// Simulates an asynchronous operation that processes the input value.
-    /// - Parameter input: An integer value to process.
-    /// - Returns: The processed result after a delay.
     private func performAsyncProcessing(for input: Int) async throws -> Int {
         try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // Simulate a 1-second delay
         return input * 2
