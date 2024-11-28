@@ -48,7 +48,7 @@ struct FetchDataView: View {
 
     private var error: String? { viewModel.error?.localizedDescription }
 
-    private var isActive: Bool { viewModel.state.isActive }
+    private var isActive: Bool { viewModel.state == .active }
 
     var body: some View {
         VStack {
@@ -88,7 +88,7 @@ struct ProcessInputView: View {
 
     private var error: String? { viewModel.error?.localizedDescription }
 
-    private var isActive: Bool { viewModel.state.isActive }
+    private var isActive: Bool { viewModel.state == .active }
 
     var body: some View {
         VStack {
