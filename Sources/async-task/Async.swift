@@ -64,7 +64,7 @@ public extension Async {
         /// A computed property to check if the state is active.
         ///
         /// - Returns: `true` if the state is `.active`, otherwise `false`.
-        var isActive: Bool {
+        public var isActive: Bool {
             self == .active
         }
     }
