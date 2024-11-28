@@ -38,10 +38,10 @@ extension Async {
         /// Indicates whether the task is currently active or idle.
         @Published public private(set) var state: Async.State = .idle
         
-        // MARK: - Private Properties
-        
         /// The custom error handler used to process errors during task execution.
-        private let errorMapper: ErrorMapper<E>?
+        public let errorMapper: ErrorMapper<E>?
+        
+        // MARK: - Private Properties
         
         /// The currently running task, if any.
         ///
@@ -150,7 +150,7 @@ extension Async {
                 do {
                     self?.value = try await operation()
                 } catch {
-                    self?.handle(error)
+                    self?.error = self?.handle(error)
                 }
             }
         }
@@ -158,23 +158,6 @@ extension Async {
         @MainActor
         private func setState(_ value: State){
             state = value
-        }
-        
-        /// Handles errors encountered during task execution.
-        ///
-        /// This method processes the error using the custom error handler, if provided. If no handler is available,
-        /// it attempts to cast the error to the expected type `E`. If the error cannot be cast, the error state is cleared.
-        ///
-        /// - Parameter error: The error encountered during task execution.
-        @MainActor
-        private func handle(_ error: Error) {
-            if let error = errorMapper?(error) {
-                self.error = error
-            } else if let error = error as? E {
-                self.error = error
-            } else{
-                self.error = nil
-            }
         }
     }
 }

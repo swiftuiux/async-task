@@ -21,7 +21,7 @@ public extension Async {
     ///
     /// This closure processes an optional `Error` and returns an optional custom error of type `E`.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    typealias ErrorMapper<E: Error> = @Sendable (Error?) -> E?
+    typealias ErrorMapper<E: Error & Sendable> = @Sendable (Error?) -> E?
     
     /// A closure that asynchronously transforms an input of type `Input` into an output of type `Output`.
     ///

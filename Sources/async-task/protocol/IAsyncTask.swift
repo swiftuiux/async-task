@@ -12,7 +12,7 @@ import Foundation
 public protocol IAsyncTask: AnyObject {
 
         associatedtype Value: Sendable
-        associatedtype ErrorType: Error
+        associatedtype ErrorType: Error, Sendable
 
         // MARK: - Properties
 
@@ -24,6 +24,8 @@ public protocol IAsyncTask: AnyObject {
 
         /// The current state of the task.
         var state: Async.State { get }
+    
+        var errorMapper: Async.ErrorMapper<ErrorType>? { get }
 
         // MARK: - Methods
 
@@ -47,3 +49,22 @@ public protocol IAsyncTask: AnyObject {
         ///     returns a value of type `Value` upon completion. The closure can throw an error if the task fails.
         func start<I: Sendable>(with input: I, operation: @escaping Async.Mapper<I, Value>)
     }
+
+extension IAsyncTask{
+    /// Handles errors encountered during task execution.
+    ///
+    /// This method processes the error using the custom error handler, if provided. If no handler is available,
+    /// it attempts to cast the error to the expected type `E`. If the error cannot be cast, the error state is cleared.
+    ///
+    /// - Parameter error: The error encountered during task execution.
+    @MainActor
+    public func handle(_ error: Error) -> ErrorType? {
+        if let error = errorMapper?(error) {
+            return error
+        } else if let error = error as? ErrorType {
+            return error
+        }
+        
+        return nil
+    }
+}
