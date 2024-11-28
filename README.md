@@ -140,8 +140,6 @@ struct ObservableCustomErrorView: View {
                 Button("Fetch Data", action: fetchData)
             }
         }
-        .padding()
-        .observe(viewModel)
     }
 
     private func fetchData() {
