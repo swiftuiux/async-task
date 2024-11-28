@@ -20,13 +20,6 @@ extension Async {
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     public final class SingleTask<V: Sendable, E: Error>: ObservableObject {
         
-        // MARK: - Type Aliases
-        
-        /// A closure type for handling errors.
-        ///
-        /// This closure processes an optional `Error` and returns an optional custom error of type `E`.
-        public typealias ErrorHandler = @Sendable (Error?) -> E?
-        
         // MARK: - Public Properties
         
         /// The error encountered during the task, if any.
@@ -47,7 +40,7 @@ extension Async {
         // MARK: - Private Properties
         
         /// The custom error handler used to process errors during task execution.
-        private let errorHandler: ErrorHandler?
+        private let errorHandler: ErrorMapper<E>?
         
         /// The currently running task, if any.
         ///
@@ -59,7 +52,7 @@ extension Async {
         /// Creates a new instance of `SingleTask`.
         ///
         /// - Parameter errorHandler: A closure for custom error handling. Defaults to `nil`.
-        public init(errorHandler: ErrorHandler? = nil) {
+        public init(errorHandler: ErrorMapper<E>? = nil) {
             self.errorHandler = errorHandler
         }
         

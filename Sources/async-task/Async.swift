@@ -13,9 +13,16 @@ import Foundation
 /// and other tools designed for working with asynchronous programming patterns in Swift.
 /// It simplifies common tasks like transformation, result generation, and task state tracking.
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-public enum Async {}
+public enum Async { }
 
 public extension Async {
+    
+    /// A closure type for handling errors.
+    ///
+    /// This closure processes an optional `Error` and returns an optional custom error of type `E`.
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+    typealias ErrorMapper<E: Error> = @Sendable (Error?) -> E?
+    
     /// A closure that asynchronously transforms an input of type `Input` into an output of type `Output`.
     ///
     /// Use this type alias to represent an asynchronous operation that processes an input
