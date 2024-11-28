@@ -33,50 +33,6 @@ Async Task Kit provides tools to manage asynchronous tasks efficiently, with fea
 
 The `Async.SingleTask` class simplifies managing a single asynchronous task. It tracks the task's result, error state, and activity status, making it ideal for use in SwiftUI views.
 
----
-
-### Example: Fetching Data Without Input
-
-Below is an example of fetching data asynchronously using `Async.SingleTask` without requiring any input.
-
-```swift
-
-struct FetchDataView: View {
-    @StateObject private var viewModel = Async.SingleTask<String, Error>()
-
-    private var value: String? { viewModel.value }
-
-    private var error: String? { viewModel.error?.localizedDescription }
-
-    private var isActive: Bool { viewModel.state == .active }
-
-    var body: some View {
-        VStack {
-            if let value {
-                Text("Result: \(value)")
-            } else if let error {
-                Text("Error: \(error)")
-            } else if isActive {
-                ProgressView("Loading...")
-            } else {
-                Button("Fetch Data", action: fetchData)
-            }
-        }
-    }
-
-    private func fetchData() {
-        viewModel.start {
-            try await performAsyncFetch()
-        }
-    }
-
-    private func performAsyncFetch() async throws -> String {
-        try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // Simulate a 2-second delay
-        return "Hello, Async Task!"
-    }
-}
-```
-
 ### Example: Fetching Data With Input
 Below is an example of processing an input asynchronously using Async.SingleTask and producing a transformed output.
 
