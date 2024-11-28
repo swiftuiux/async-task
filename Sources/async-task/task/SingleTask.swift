@@ -52,7 +52,7 @@ extension Async {
         /// The currently running task, if any.
         ///
         /// This property holds a reference to the task to enable cancellation and lifecycle management.
-        private var task: Task<V?, Never>?
+        private var task: Task<Void, Never>?
         
         // MARK: - Initialization
         
@@ -81,7 +81,7 @@ extension Async {
                 task.cancel()
                 self.task = nil
             }
-            state = .idle
+            setState(.idle)
         }
         
         /// Starts an asynchronous operation without requiring input.
@@ -124,7 +124,7 @@ extension Async {
         @MainActor
         public func start<I: Sendable>(with input: I, operation: @escaping Mapper<I, V>) {
             startTask {
-                return try await operation(input)
+                try await operation(input)
             }
         }
        
@@ -143,14 +143,14 @@ extension Async {
         @MainActor
         private func startTask(_ operation: @escaping Producer<V>) {
             
-            cancel() // Cancel existing task if any.
-            clean() // Reset the current state before starting the task.
-            state = .active
+            cancel()
+            clean()
+            setState(.active)
 
-            task = Task { @MainActor [weak self] in
+            task = Task<Void, Never> { @MainActor [weak self] in
                 
                 defer {
-                    self?.state = .idle
+                    self?.setState(.idle)
                     self?.task = nil
                 }
                 do {
@@ -158,9 +158,12 @@ extension Async {
                 } catch {
                     self?.handle(error)
                 }
-                
-               return self?.value
             }
+        }
+        
+        @MainActor
+        func setState(_ value: State){
+            state = value
         }
         
         /// Handles errors encountered during task execution.
@@ -175,7 +178,7 @@ extension Async {
                 self.error = error
             } else if let error = error as? E {
                 self.error = error
-            } else {
+            } else{
                 self.error = nil
             }
         }
