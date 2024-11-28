@@ -121,7 +121,9 @@ extension Async {
                 try await operation(input)
             }
         }
-
+       
+        // MARK: - Private Methods
+        
         /// Executes an asynchronous operation and manages its lifecycle.
         ///
         /// This private method centralizes the common functionality for running an asynchronous task.
@@ -149,8 +151,6 @@ extension Async {
                 return value
             }
         }
-        
-        // MARK: - Private Methods
         
         /// Handles errors encountered during task execution.
         ///
