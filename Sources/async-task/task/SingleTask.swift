@@ -1,6 +1,6 @@
 //
-//  ViewModel.swift
-//  async-location-swift-example
+//  SingleTask.swift
+//
 //
 //  Created by Igor Shelopaev on 27.11.24.
 //
