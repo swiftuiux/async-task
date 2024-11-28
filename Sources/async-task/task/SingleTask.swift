@@ -13,7 +13,7 @@ extension Async {
     ///
     /// This view model handles the lifecycle of a single asynchronous task in a SwiftUI environment.
     /// It provides features such as task cancellation, error handling, and state management, making
-    /// it easier to integrate asynchronous operations into reactive UI workflows.
+    /// it easier to integrate asynchronous operations into declarative UI workflows.
     ///
     /// - Note: The `@MainActor` attribute ensures all updates to properties and method calls occur on
     ///         the main thread, making it safe for use with SwiftUI.
