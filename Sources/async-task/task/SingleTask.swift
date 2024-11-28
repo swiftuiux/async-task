@@ -40,7 +40,7 @@ extension Async {
         // MARK: - Private Properties
         
         /// The custom error handler used to process errors during task execution.
-        private let errorHandler: ErrorMapper<E>?
+        private let errorMapper: ErrorMapper<E>?
         
         /// The currently running task, if any.
         ///
@@ -51,9 +51,9 @@ extension Async {
         
         /// Creates a new instance of `SingleTask`.
         ///
-        /// - Parameter errorHandler: A closure for custom error handling. Defaults to `nil`.
-        public init(errorHandler: ErrorMapper<E>? = nil) {
-            self.errorHandler = errorHandler
+        /// - Parameter errorMapper: A closure for custom error handling. Defaults to `nil`.
+        public init(errorMapper: ErrorMapper<E>? = nil) {
+            self.errorMapper = errorMapper
         }
         
         // MARK: - Public Methods
@@ -167,7 +167,7 @@ extension Async {
         /// - Parameter error: The error encountered during task execution.
         @MainActor
         private func handle(_ error: Error) {
-            if let error = errorHandler?(error) {
+            if let error = errorMapper?(error) {
                 self.error = error
             } else if let error = error as? E {
                 self.error = error
