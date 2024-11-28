@@ -19,7 +19,7 @@ extension Async {
     ///         the main thread, making it safe for use with SwiftUI.
     @MainActor
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    public final class SingleTask<V: Sendable, E: Error>: ObservableObject {
+    public final class SingleTask<V: Sendable, E: Error>: ObservableObject, IAsyncTask {
         
         // MARK: - Public Properties
         
