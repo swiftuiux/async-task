@@ -10,21 +10,21 @@ import SwiftUI
 extension Async {
     /// A view model that manages a cancellable asynchronous task.
     ///
-    /// This view model is designed to manage the lifecycle of a single asynchronous task in a SwiftUI environment.
-    /// It provides features for task cancellation, error handling, and state management, making it easier to
-    /// integrate asynchronous operations into reactive UI updates.
+    /// This view model handles the lifecycle of a single asynchronous task in a SwiftUI environment.
+    /// It provides features such as task cancellation, error handling, and state management, making
+    /// it easier to integrate asynchronous operations into reactive UI workflows.
     ///
-    /// - Note: The `@MainActor` attribute ensures that all updates to published properties and method calls
-    ///         occur on the main thread, making it safe to use with SwiftUI.
+    /// - Note: The `@MainActor` attribute ensures all updates to properties and method calls occur on
+    ///         the main thread, making it safe for use with SwiftUI.
     @MainActor
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     public final class SingleTask<V: Sendable, E: Error>: ObservableObject {
         
-        // MARK: - Type aliases
+        // MARK: - Type Aliases
         
         /// A closure type for handling errors.
         ///
-        /// The error handler processes an optional `Error` and returns an optional custom error of type `E`.
+        /// This closure processes an optional `Error` and returns an optional custom error of type `E`.
         public typealias ErrorHandler = @Sendable (Error?) -> E?
         
         // MARK: - Public Properties
@@ -39,10 +39,10 @@ extension Async {
         /// This property holds the value produced by a successfully completed task.
         @Published public private(set) var value: V?
         
-        /// Indicates whether the task is currently active.
+        /// The current state of the task.
         ///
-        /// This property is `true` when the task is running and `false` when idle.
-        @Published public private(set) var isActive = false
+        /// Indicates whether the task is currently active or idle.
+        @Published public private(set) var state: Async.State = .idle
         
         // MARK: - Private Properties
         
@@ -75,9 +75,9 @@ extension Async {
         
         /// Cancels the currently running task, if any.
         ///
-        /// This method stops the task and resets its reference, ensuring proper state management.
+        /// This method stops the task, resets its reference, and updates the state to `.idle`.
         public func cancel() {
-            isActive = false
+            state = .idle
             
             if let task {
                 task.cancel()
@@ -86,17 +86,16 @@ extension Async {
             task = nil
         }
         
-        /// Starts an asynchronous operation without requiring an input.
+        /// Starts an asynchronous operation without requiring input.
         ///
-        /// This method initiates an asynchronous task using the provided `Producer` closure.
+        /// This method initializes an asynchronous task using the provided `Producer` closure.
         /// It resets the current state, starts the task, and handles its lifecycle, including
         /// error management and state updates.
         ///
         /// - Parameter operation: A closure that performs an asynchronous task and returns
         ///   a value of type `V` upon completion. The closure can throw an error if the task fails.
         ///
-        /// - Note: This method ensures that all updates occur on the main actor, making it safe
-        ///         for use in UI-related contexts.
+        /// - Note: Ensures all updates occur on the main actor, making it safe for use in UI-related contexts.
         @MainActor
         public func start(operation: @escaping Producer<V>) {
             startTask {
@@ -106,19 +105,16 @@ extension Async {
 
         /// Starts an asynchronous operation with a specified input.
         ///
-        /// This method initiates an asynchronous task using the provided `Mapper` closure
-        /// and input value. It resets the current state, starts the task, and handles its
-        /// lifecycle, including error management and state updates.
+        /// This method initializes an asynchronous task using the provided `Mapper` closure and input value.
+        /// It resets the current state, starts the task, and handles its lifecycle, including error management
+        /// and state updates.
         ///
         /// - Parameters:
-        ///   - operation: A closure that takes an input of type `I`, performs an asynchronous
-        ///     task, and returns a value of type `V` upon completion. The closure can throw
-        ///     an error if the task fails.
+        ///   - operation: A closure that takes an input of type `I`, performs an asynchronous task, and
+        ///     returns a value of type `V` upon completion. The closure can throw an error if the task fails.
         ///   - input: The input value of type `I` to be passed to the `operation` closure.
         ///
-        /// - Note: Both the input and output types (`I` and `V`) must conform to `Sendable` to
-        ///         ensure thread safety in Swift's concurrency model. This method also ensures
-        ///         that all updates occur on the main actor, making it safe for use in UI-related contexts.
+        /// - Note: Both `I` and `V` must conform to `Sendable` to ensure thread safety in Swift's concurrency model.
         @MainActor
         public func start<I: Sendable>(operation: @escaping Mapper<I, V>, with input: I) {
             startTask {
@@ -134,22 +130,22 @@ extension Async {
         /// - Parameter operation: A closure that performs an asynchronous task and returns a value
         ///   of type `V` upon completion. The closure can throw an error if the task fails.
         ///
-        /// - Note: This method ensures thread safety by running on the main actor, making it suitable
-        ///         for managing UI-related tasks or state changes.
+        /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
+        ///         UI-related tasks or state changes.
         @MainActor
         private func startTask(_ operation: @escaping () async throws -> V) {
-            clean() // Reset the current state (value and error) before starting the task.
-            isActive = true // Mark the task as active.
+            clean() // Reset the current state before starting the task.
+            state = .active // Mark the task as active.
 
             task = Task {
                 do {
                     value = try await operation() // Execute the asynchronous operation and store the result.
                 } catch {
-                    handle(error) // Handle any errors encountered during execution.
-                    cancel() // Cancel the task to reset its state.
+                    handle(error) // Process any errors encountered during execution.
+                    cancel() // Reset the state by cancelling the task.
                 }
 
-                isActive = false // Mark the task as inactive once it completes.
+                state = .idle // Mark the task as idle once it completes.
                 return value
             }
         }
