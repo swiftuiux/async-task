@@ -116,7 +116,7 @@ extension Async {
         ///
         /// - Note: Both `I` and `V` must conform to `Sendable` to ensure thread safety in Swift's concurrency model.
         @MainActor
-        public func start<I: Sendable>(operation: @escaping Mapper<I, V>, with input: I) {
+        public func start<I: Sendable>(with input: I, operation: @escaping Mapper<I, V>) {
             startTask {
                 try await operation(input)
             }
