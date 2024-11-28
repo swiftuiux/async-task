@@ -12,7 +12,7 @@
 
 Explore real-world examples of how to use this package in SwiftUI:
 
-1. [Async Location Example](https://github.com/swiftuiux/async-location-swift-example)
+1. [Async Location Example](https://github.com/swiftuiux/corelocation-manager-tracker-swift-apple-maps-example)
 2. [Replicate Kit Example](https://github.com/swiftuiux/replicate-kit-example)
 
 ---
