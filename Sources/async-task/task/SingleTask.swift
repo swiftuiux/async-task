@@ -162,7 +162,7 @@ extension Async {
         }
         
         @MainActor
-        func setState(_ value: State){
+        private func setState(_ value: State){
             state = value
         }
         
