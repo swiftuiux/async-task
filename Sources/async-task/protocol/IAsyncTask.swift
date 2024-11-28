@@ -9,6 +9,7 @@ import Foundation
 
 /// A protocol defining the behavior of a cancellable asynchronous task manager.
 @MainActor
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public protocol IAsyncTask: AnyObject {
 
         associatedtype Value: Sendable
@@ -50,6 +51,7 @@ public protocol IAsyncTask: AnyObject {
         func start<I: Sendable>(with input: I, operation: @escaping Async.Mapper<I, Value>)
     }
 
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 extension IAsyncTask{
     /// Handles errors encountered during task execution.
     ///
