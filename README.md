@@ -1,70 +1,121 @@
-# Async task kit
+# Async Task Kit
 
-### Please star the repository if you believe continuing the development of this package is worthwhile. This will help me understand which package deserves more effort.
+### ⭐️ If you find this package helpful, please star the repository. Your feedback helps prioritize further development and enhancements.
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Figor11191708%2Fasync-task%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/igor11191708/async-task)
 
-It's a start of the Swift package providing tools and types for managing asynchronous tasks. This package is designed to simplify the handling of cancellable asynchronous operations in SwiftUI applications by offering reusable view models and patterns.
+**Async Task Kit** is a Swift package designed to simplify the management of cancellable asynchronous tasks. It provides reusable tools and patterns for handling operations in SwiftUI applications, making it easier to integrate reactive workflows.
 
-## SwiftUI example of using package
-1. [async location](https://github.com/igor11191708/async-location-swift-example)
-2. [replicate kit](https://github.com/igor11191708/replicate-kit-example) 
- 
+---
+
+## Examples in SwiftUI
+
+Explore real-world examples of how to use this package in SwiftUI:
+
+1. [Async Location Example](https://github.com/igor11191708/async-location-swift-example)
+2. [Replicate Kit Example](https://github.com/igor11191708/replicate-kit-example)
+
+---
+
 ## Overview
 
-`AsyncTaskManager` provides a set of tools for managing asynchronous tasks with support for:
-- **Error handling:** Handle errors gracefully with custom error handlers.
-- **State management:** Track the progress and result of tasks using reactive properties.
-- **Task cancellation:** Cancel tasks when they are no longer needed, freeing up resources.
+Async Task Kit provides tools to manage asynchronous tasks efficiently, with features such as:
+- **Error Handling:** Gracefully manage errors with customizable error handlers.
+- **State Management:** Monitor task progress, results, and errors using reactive properties.
+- **Task Cancellation:** Cancel running tasks to free up resources when no longer needed.
+
+---
 
 ## Features
 
-- **`SingleTaskViewModel`:** A view model for managing a single cancellable asynchronous task.
-- **Error-handling extensibility:** Pass a custom error handler to adapt to your application's requirements.
-- **Integration with SwiftUI:** Leverage the `@Published` property wrapper for UI updates.
+- **`Async.SingleTask`:** A view model for managing a single cancellable asynchronous task.
+- **Customizable Error Handling:** Define custom error-handling logic tailored to your application.
+- **Seamless SwiftUI Integration:** Uses `@Published` properties for real-time UI updates.
+
+---
 
 ## Usage
 
-### `SingleTaskViewModel`
+### `Async.SingleTask`
 
-The `SingleTaskViewModel` class manages a cancellable asynchronous operation. It tracks the operation's result, error, and activity state.
+The `Async.SingleTask` class simplifies managing a single asynchronous task. It tracks the task's result, error state, and activity status, making it ideal for use in SwiftUI views.
 
-#### Properties
+---
 
-- `value`: The result of the operation, if successful.
-- `error`: An error of type `E` if the operation fails.
-- `isActive`: Indicates whether the task is currently running.
+### Example: Fetching Data Without Input
 
-#### Methods
-
-- `start(operation:)`: Starts the asynchronous task.
-- `cancel()`: Cancels the currently running task.
-
-#### Example
+Below is an example of fetching data asynchronously using `Async.SingleTask` without requiring any input.
 
 ```swift
-struct ExampleView: View {
-    @StateObject private var viewModel = SingleTaskViewModel<String, Error>()
-    
+
+struct FetchDataView: View {
+    @StateObject private var viewModel = Async.SingleTask<String, Error>()
+
     var body: some View {
         VStack {
             if let value = viewModel.value {
                 Text("Result: \(value)")
             } else if let error = viewModel.error {
                 Text("Error: \(error.localizedDescription)")
-            } else if viewModel.isActive {
+            } else if viewModel.state.isActive {
                 ProgressView("Loading...")
             } else {
-                Button("Fetch Data") {
-                    viewModel.start {
-                        // Simulate an async task
-                        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
-                        return "Hello, World!"
-                    }
-                }
+                Button("Fetch Data", action: fetchData)
             }
         }
         .padding()
     }
+
+    /// Initiates the task to fetch data.
+    private func fetchData() {
+        viewModel.start {
+            try await performAsyncFetch()
+        }
+    }
+
+    /// Simulates an asynchronous data fetch.
+    /// - Returns: A string result after a delay.
+    private func performAsyncFetch() async throws -> String {
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // Simulate a 2-second delay
+        return "Hello, Async Task!"
+    }
 }
-``` 
+```
+### Example: Fetching Data With Input
+Below is an example of processing an input asynchronously using Async.SingleTask and producing a transformed output.
+
+```swift
+struct ProcessInputView: View {
+    @StateObject private var viewModel = Async.SingleTask<Int, Error>()
+
+    var body: some View {
+        VStack {
+            if let value = viewModel.value {
+                Text("Result: \(value)")
+            } else if let error = viewModel.error {
+                Text("Error: \(error.localizedDescription)")
+            } else if viewModel.state.isActive {
+                ProgressView("Processing...")
+            } else {
+                Button("Process Input", action: processInput)
+            }
+        }
+        .padding()
+    }
+
+    /// Initiates the task to process the input value.
+    private func processInput() {
+        viewModel.start(with: 21) { input in
+            try await performAsyncProcessing(for: input)
+        }
+    }
+
+    /// Simulates an asynchronous operation that processes the input value.
+    /// - Parameter input: An integer value to process.
+    /// - Returns: The processed result after a delay.
+    private func performAsyncProcessing(for input: Int) async throws -> Int {
+        try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // Simulate a 1-second delay
+        return input * 2
+    }
+}
+```
