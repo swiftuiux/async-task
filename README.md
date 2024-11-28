@@ -2,7 +2,7 @@
 
 ### Please star the repository if you believe continuing the development of this package is worthwhile. This will help me understand which package deserves more effort.
 
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Figor11191708%2Fasync-task%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/igor11191708/async-task)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fswiftuiux%2Fasync-task%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/swiftuiux/async-task)
 
 **Async Task Kit** is a Swift package designed to simplify the management of cancellable asynchronous tasks. It provides reusable tools and patterns for handling asynchronous operations in SwiftUI applications.
 
@@ -12,8 +12,8 @@
 
 Explore real-world examples of how to use this package in SwiftUI:
 
-1. [Async Location Example](https://github.com/igor11191708/async-location-swift-example)
-2. [Replicate Kit Example](https://github.com/igor11191708/replicate-kit-example)
+1. [Async Location Example](https://github.com/swiftuiux/async-location-swift-example)
+2. [Replicate Kit Example](https://github.com/swiftuiux/replicate-kit-example)
 
 ---
 
