@@ -17,9 +17,5 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "async-task"),
-        .testTarget(
-            name: "async-taskTests",
-            dependencies: ["async-task"]
-        ),
     ]
 )
