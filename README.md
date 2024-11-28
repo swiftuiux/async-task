@@ -44,35 +44,39 @@ Below is an example of fetching data asynchronously using `Async.SingleTask` wit
 struct FetchDataView: View {
     @StateObject private var viewModel = Async.SingleTask<String, Error>()
 
+    private var value: String? { viewModel.value }
+
+    private var error: String? { viewModel.error?.localizedDescription }
+
+    private var isActive: Bool { viewModel.state.isActive }
+
     var body: some View {
         VStack {
-            if let value = viewModel.value {
+            if let value {
                 Text("Result: \(value)")
-            } else if let error = viewModel.error {
-                Text("Error: \(error.localizedDescription)")
-            } else if viewModel.state.isActive {
+            } else if let error {
+                Text("Error: \(error)")
+            } else if isActive {
                 ProgressView("Loading...")
             } else {
                 Button("Fetch Data", action: fetchData)
             }
         }
-        .padding()
     }
 
-    /// Initiates the task to fetch data.
     private func fetchData() {
         viewModel.start {
             try await performAsyncFetch()
         }
     }
 
-    /// Simulates an asynchronous data fetch.
     private func performAsyncFetch() async throws -> String {
         try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // Simulate a 2-second delay
         return "Hello, Async Task!"
     }
 }
 ```
+
 ### Example: Fetching Data With Input
 Below is an example of processing an input asynchronously using Async.SingleTask and producing a transformed output.
 
@@ -80,29 +84,32 @@ Below is an example of processing an input asynchronously using Async.SingleTask
 struct ProcessInputView: View {
     @StateObject private var viewModel = Async.SingleTask<Int, Error>()
 
+    private var value: String? { viewModel.value }
+
+    private var error: String? { viewModel.error?.localizedDescription }
+
+    private var isActive: Bool { viewModel.state.isActive }
+
     var body: some View {
         VStack {
-            if let value = viewModel.value {
+            if let value {
                 Text("Result: \(value)")
-            } else if let error = viewModel.error {
-                Text("Error: \(error.localizedDescription)")
-            } else if viewModel.state.isActive {
-                ProgressView("Processing...")
+            } else if let error {
+                Text("Error: \(error)")
+            } else if isActive {
+                ProgressView("Loading...")
             } else {
                 Button("Process Input", action: processInput)
             }
         }
-        .padding()
     }
 
-    /// Initiates the task to process the input value.
     private func processInput() {
         viewModel.start(with: 21) { input in
             try await performAsyncProcessing(for: input)
         }
     }
 
-    /// Simulates an asynchronous operation that processes the input value.
     private func performAsyncProcessing(for input: Int) async throws -> Int {
         try await Task.sleep(nanoseconds: 1 * 1_000_000_000) // Simulate a 1-second delay
         return input * 2
