@@ -141,24 +141,25 @@ extension Async {
         /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
         ///         UI-related tasks or state changes.
         @MainActor
-        private func startTask(_ operation: @escaping () async throws -> V) {
+        private func startTask(_ operation: @escaping Producer<V>) {
+            
+            cancel() // Cancel existing task if any.
             clean() // Reset the current state before starting the task.
-            state = .active // Mark the task as active.
+            state = .active
 
-            task = Task { @MainActor in
+            task = Task { @MainActor [weak self] in
                 
                 defer {
-                        state = .idle
-                        task = nil
-                    }
-                
+                    self?.state = .idle
+                    self?.task = nil
+                }
                 do {
-                    value = try await operation() // Execute the asynchronous operation and store the result.
+                    self?.value = try await operation()
                 } catch {
-                    handle(error)
+                    self?.handle(error)
                 }
                 
-                return value
+               return self?.value
             }
         }
         
