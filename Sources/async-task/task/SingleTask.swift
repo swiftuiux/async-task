@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 extension Async {
     /// A view model that manages a cancellable asynchronous task.
     ///
