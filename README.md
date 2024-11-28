@@ -22,10 +22,9 @@ Explore real-world examples of how to use this package in SwiftUI:
 Async Task Kit provides tools to manage asynchronous tasks efficiently, with features such as:
 - **State Management:** Monitor task progress, results, and errors using reactive properties.
 - **Task Cancellation:** Cancel running tasks to free up resources when no longer needed.
-- **`Async.SingleTask`:** A view model for managing a single cancellable asynchronous task.
 - **Customizable Error Handling:** Define custom error-handling logic tailored to your application.
 - **Seamless SwiftUI Integration:** Uses `@Published` properties for real-time UI updates. I decided to keep @Published, I think at this moment the world is not ready for iOS 17. 
-
+- **`Async.SingleTask`:** A view model for managing a single cancellable asynchronous task.
 ---
 
 ## Usage
