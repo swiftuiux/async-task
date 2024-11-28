@@ -117,7 +117,7 @@ struct ProcessInputView: View {
 }
 ```
 
-### Async.ObservableSingleTask
+### `Async.ObservableSingleTask`
 For projects targeting iOS 17 and above, you can use Async.ObservableSingleTask, which leverages the new @Observable macro for more efficient state observation in SwiftUI.
 
 ### Example: Fetching Data Without Input Using ObservableSingleTask
