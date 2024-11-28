@@ -116,3 +116,51 @@ struct ProcessInputView: View {
     }
 }
 ```
+
+### Async.ObservableSingleTask
+For projects targeting iOS 17 and above, you can use Async.ObservableSingleTask, which leverages the new @Observable macro for more efficient state observation in SwiftUI.
+
+### Example: Fetching Data Without Input Using ObservableSingleTask
+
+```swift
+@available(iOS 17.0, *)
+struct ObservableCustomErrorView: View {
+
+    @State private var viewModel = Async.ObservableSingleTask<String, CustomError>(errorMapper: customErrorMapper)
+
+    var body: some View {
+        VStack {
+            if let value = viewModel.value {
+                Text("Result: \(value)")
+            } else if let error = viewModel.error {
+                Text("Error: \(error)")
+            } else if viewModel.state == .active {
+                ProgressView("Loading...")
+            } else {
+                Button("Fetch Data", action: fetchData)
+            }
+        }
+        .padding()
+        .observe(viewModel)
+    }
+
+    private func fetchData() {
+        viewModel.start {
+            try await performAsyncFetch()
+        }
+    }
+
+    private func performAsyncFetch() async throws -> String {
+        // Simulate an error
+        throw NSError(domain: "Network", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to reach server"])
+    } 
+}
+
+    enum CustomError: Error {
+        case networkError(String)
+    }
+
+    let customErrorMapper: Async.ErrorMapper<CustomError> = { error in
+        return .networkError(error.localizedDescription)
+    }
+```
