@@ -52,21 +52,6 @@ public protocol IAsyncTask: AnyObject {
 
     // MARK: - Methods
 
-    /// Clears the specified properties of the task.
-    ///
-    /// Use this method to reset specific properties of the task, such as `error` or `value`.
-    /// By default, it clears both the `error` and `value` properties, unless otherwise specified.
-    ///
-    /// - Parameter fields: An array of `TaskProperty` specifying which properties to clear. For example,
-    ///   passing `[.error, .value]` will clear both the `error` and `value` properties.
-    func clean(fields: [Async.TaskProperty])
-    
-    /// Resets the `error` property of the task.
-    func resetError()
-    
-    /// Resets the `value` property of the task.
-    func resetValue()
-
     /// Cancels the currently running task, if any.
     ///
     /// This method stops the task immediately, resets the task reference, and updates the state to `.idle`.
@@ -107,24 +92,7 @@ public protocol IAsyncTask: AnyObject {
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-extension IAsyncTask {
-    
-    /// Clears specified properties of the asynchronous task.
-    ///
-    /// This method allows selective clearing of task properties, such as `error` or `value`.
-    /// By default, both `error` and `value` properties are cleared unless specific properties
-    /// are specified in the `fields` parameter.
-    ///
-    /// - Parameter fields: An array of `TaskProperty` values specifying which properties
-    ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
-    public func clean(fields: [Async.TaskProperty] = [.error, .value]) {
-        for field in fields {
-            switch field {
-                case .error: resetError()
-                case .value: resetValue()
-            }
-        }
-    }
+extension IAsyncTask {    
     
     /// Starts an asynchronous operation without requiring input.
     ///

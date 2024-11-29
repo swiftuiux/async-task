@@ -58,17 +58,7 @@ extension Async {
         }
         
         // MARK: - Public Methods
-        
-        /// Resets the `error` property of the asynchronous task.
-        public func resetError() {
-            self.error = nil
-        }
-
-        /// Resets the `value` property of the asynchronous task.
-        public func resetValue() {
-            self.value = nil
-        }
-        
+               
         /// Cancels the currently running task, if any.
         ///
         /// This method stops the task, resets its reference, and updates the state to `.idle`.
@@ -111,6 +101,33 @@ extension Async {
                     self?.error = self?.handle(error)
                 }
             }
+        }
+        
+        /// Clears specified properties of the asynchronous task.
+        ///
+        /// This method allows selective clearing of task properties, such as `error` or `value`.
+        /// By default, both `error` and `value` properties are cleared unless specific properties
+        /// are specified in the `fields` parameter.
+        ///
+        /// - Parameter fields: An array of `TaskProperty` values specifying which properties
+        ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
+        private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
+            for field in fields {
+                switch field {
+                    case .error: resetError()
+                    case .value: resetValue()
+                }
+            }
+        }
+        
+        /// Resets the `error` property of the asynchronous task.
+        private func resetError() {
+            self.error = nil
+        }
+
+        /// Resets the `value` property of the asynchronous task.
+        private func resetValue() {
+            self.value = nil
         }
         
         @MainActor
