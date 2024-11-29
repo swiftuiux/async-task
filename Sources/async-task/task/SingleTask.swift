@@ -77,50 +77,6 @@ extension Async {
             }
             setState(.idle)
         }
-        
-        /// Starts an asynchronous operation without requiring input.
-        ///
-        /// This method initializes an asynchronous task using the provided `Producer` closure.
-        /// It resets the current state, starts the task, and handles its lifecycle, including
-        /// error management and state updates.
-        ///
-        /// - Parameter operation: A closure that performs an asynchronous task and returns
-        ///   a value of type `V` upon completion. The closure can throw an error if the task fails.
-        ///
-        /// - Note: Ensures all updates occur on the main actor, making it safe for use in UI-related contexts.
-        @MainActor
-        public func start(operation: @escaping Producer<V>) {
-            startTask {
-                try await operation()
-            }
-        }
-
-        /// Starts an asynchronous operation with a specified input.
-        ///
-        /// This method initializes an asynchronous task using the provided `Mapper` closure and input value.
-        /// While the `input` is treated as immutable within the operation, this immutability applies only
-        /// to the reference if `input` is a class. For complete immutability, the inner properties or nested
-        /// objects within the `input` must also be designed to prevent mutation (e.g., using `final`, `let`, or `Sendable`-conformant types).
-        ///
-        /// - Parameters:
-        ///   - input: A value of type `I` to be passed to the `operation` closure. If `input` is a reference type,
-        ///     its immutability is limited to the reference itself, and its internal state may still be mutable.
-        ///     To ensure thread safety, the properties of `input` and any nested objects should be immutable or
-        ///     designed with concurrency safety in mind.
-        ///   - operation: A closure that takes an input of type `I`, performs an asynchronous task, and
-        ///     returns a value of type `V` upon completion. The closure can throw an error if the task fails.
-        ///
-        /// - Note: Both `I` (input type) and `V` (output type) must conform to `Sendable` to ensure thread safety
-        ///         when used in Swift's concurrency model. Additionally, developers should ensure that `input`
-        ///         and its nested types are safe to use concurrently if modifications are possible.
-        ///         If input is a value type, it’s already copied when passed to the closure.
-        ///         If input is a reference type and you need deep immutability, consider enforcing immutability at the type definition level.
-        @MainActor
-        public func start<I: Sendable>(with input: I, operation: @escaping Mapper<I, V>) {
-            startTask {
-                try await operation(input)
-            }
-        }
        
         // MARK: - Private Methods
         
@@ -135,7 +91,7 @@ extension Async {
         /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
         ///         UI-related tasks or state changes.
         @MainActor
-        private func startTask(_ operation: @escaping Producer<V>) {
+        public func startTask(_ operation: @escaping Producer<V>) {
             
             cancel()
             clean()

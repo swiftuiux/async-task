@@ -83,37 +83,6 @@ extension Async {
             setState(.idle)
         }
         
-        /// Starts an asynchronous operation without input.
-        ///
-        /// Initializes and manages the lifecycle of an asynchronous task. Resets the state,
-        /// starts the task, and handles errors or results automatically.
-        ///
-        /// - Parameter operation: A closure that performs an asynchronous task and returns
-        ///   a value of type `V`. The closure can throw an error if the task fails.
-        public func start(operation: @escaping Producer<V>) {
-            startTask {
-                try await operation()
-            }
-        }
-
-        /// Starts an asynchronous operation with an input value.
-        ///
-        /// Initializes and manages the lifecycle of an asynchronous task with a provided input.
-        /// Ensures proper error and state handling during execution.
-        ///
-        /// - Parameters:
-        ///   - input: A value of type `I` passed to the `operation` closure.
-        ///     If `input` is a reference type, ensure its internal properties are immutable or concurrency-safe.
-        ///   - operation: A closure that takes an input of type `I`, performs an asynchronous task, and
-        ///     returns a value of type `V`. The closure can throw an error if the task fails.
-        public func start<I: Sendable>(with input: I, operation: @escaping Mapper<I, V>) {
-            startTask {
-                try await operation(input)
-            }
-        }
-       
-        // MARK: - Private Methods
-        
         /// Manages the lifecycle of an asynchronous task.
         ///
         /// Centralizes task execution, state updates, and error handling. Automatically
@@ -121,7 +90,7 @@ extension Async {
         ///
         /// - Parameter operation: A closure that performs an asynchronous task and returns
         ///   a value of type `V`. The closure can throw an error if the task fails.
-        private func startTask(_ operation: @escaping Producer<V>) {
+        public func startTask(_ operation: @escaping Producer<V>) {
             cancel()
             clean()
             setState(.active)
@@ -138,7 +107,10 @@ extension Async {
                 }
             }
         }
+       
+        // MARK: - Private Methods
         
+       
         /// Updates the task state.
         ///
         /// - Parameter value: The new state to assign.
