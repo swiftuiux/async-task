@@ -59,12 +59,14 @@ extension Async {
         
         // MARK: - Public Methods
         
-        /// Clears the current value and error state.
-        ///
-        /// Use this method to reset the view model before starting a new task.
-        public func clean() {
-            error = nil
-            value = nil
+        /// Resets the `error` property of the asynchronous task.
+        public func resetError() {
+            self.error = nil
+        }
+
+        /// Resets the `value` property of the asynchronous task.
+        public func resetValue() {
+            self.value = nil
         }
         
         /// Cancels the currently running task, if any.

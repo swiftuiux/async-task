@@ -62,13 +62,14 @@ extension Async {
         
         // MARK: - Public Methods
         
-        /// Resets the current value and error state.
-        ///
-        /// Call this method to clear the task’s result and error before starting a new task
-        /// or after processing the current state.
-        public func clean() {
-            error = nil
-            value = nil
+        /// Resets the `error` property of the asynchronous task.
+        public func resetError() {
+            self.error = nil
+        }
+
+        /// Resets the `value` property of the asynchronous task.
+        public func resetValue() {
+            self.value = nil
         }
         
         /// Cancels the currently running task, if any.

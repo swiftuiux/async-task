@@ -75,4 +75,10 @@ public extension Async {
             self == .active
         }
     }
+    
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+    enum TaskProperty{
+        case error
+        case value
+    }
 }

@@ -34,29 +34,43 @@ public protocol IAsyncTask: AnyObject {
 
     /// The result produced by the asynchronous task, if available.
     ///
-    /// This property holds the value produced by a successfully completed task.
+    /// This property holds the value produced by a successfully completed task. If the task fails
+    /// or has not yet completed, this property will be `nil`.
     var value: Value? { get }
 
     /// The current state of the task.
     ///
-    /// Indicates whether the task is idle, active, or completed.
+    /// Indicates whether the task is idle, active, or completed. This property helps in tracking the
+    /// task's lifecycle and can be used to trigger UI updates or other logic based on task status.
     var state: Async.State { get }
     
     /// A custom error mapper used to process and transform errors encountered during task execution.
     ///
     /// This closure allows custom error handling and mapping of generic errors into the specified `ErrorType`.
+    /// If not provided, errors will not be automatically transformed.
     var errorMapper: Async.ErrorMapper<ErrorType>? { get }
 
     // MARK: - Methods
 
-    /// Clears the current value and error state.
+    /// Clears the specified properties of the task.
     ///
-    /// Use this method to reset the task's state before starting a new task or after handling the current results.
-    func clean()
+    /// Use this method to reset specific properties of the task, such as `error` or `value`.
+    /// By default, it clears both the `error` and `value` properties, unless otherwise specified.
+    ///
+    /// - Parameter fields: An array of `TaskProperty` specifying which properties to clear. For example,
+    ///   passing `[.error, .value]` will clear both the `error` and `value` properties.
+    func clean(fields: [Async.TaskProperty])
+    
+    /// Resets the `error` property of the task.
+    func resetError()
+    
+    /// Resets the `value` property of the task.
+    func resetValue()
 
     /// Cancels the currently running task, if any.
     ///
-    /// This method stops the task, resets the task reference, and updates the state to `.idle`.
+    /// This method stops the task immediately, resets the task reference, and updates the state to `.idle`.
+    /// If no task is running, calling this method has no effect.
     func cancel()
 
     /// Starts an asynchronous operation without requiring input.
@@ -85,7 +99,7 @@ public protocol IAsyncTask: AnyObject {
     /// It resets the current state, starts the task, manages errors, and updates the task's state.
     ///
     /// - Parameter operation: A closure that performs an asynchronous task and returns a value
-    ///   of type `V` upon completion. The closure can throw an error if the task fails.
+    ///   of type `Value` upon completion. The closure can throw an error if the task fails.
     ///
     /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
     ///         UI-related tasks or state changes.
@@ -94,6 +108,23 @@ public protocol IAsyncTask: AnyObject {
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 extension IAsyncTask {
+    
+    /// Clears specified properties of the asynchronous task.
+    ///
+    /// This method allows selective clearing of task properties, such as `error` or `value`.
+    /// By default, both `error` and `value` properties are cleared unless specific properties
+    /// are specified in the `fields` parameter.
+    ///
+    /// - Parameter fields: An array of `TaskProperty` values specifying which properties
+    ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
+    public func clean(fields: [Async.TaskProperty] = [.error, .value]) {
+        for field in fields {
+            switch field {
+                case .error: resetError()
+                case .value: resetValue()
+            }
+        }
+    }
     
     /// Starts an asynchronous operation without requiring input.
     ///
