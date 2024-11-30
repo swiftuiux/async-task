@@ -17,7 +17,7 @@ import Foundation
 ///         ensuring thread safety for UI-related operations.
 @MainActor
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-public protocol IAsyncTask: AnyObject {
+public protocol IAsyncTask: AnyObject, Sendable {
     
     /// The type of the value produced by the asynchronous task.
     associatedtype Value: Sendable
