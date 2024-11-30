@@ -11,10 +11,11 @@ extension Async {
     /// A view model for managing a cancellable asynchronous task in a SwiftUI environment.
     ///
     /// This class provides lifecycle management for a single asynchronous task, including cancellation,
-    /// error handling, and state management. It ensures compatibility with SwiftUI’s declarative UI workflows
-    /// and guarantees thread safety by operating exclusively on the main actor.
+    /// error handling, and state management. It integrates seamlessly with SwiftUI using `@Observable`
+    /// to notify views about state changes.
     ///
-    /// - Note: Uses `@Observable` to automatically notify SwiftUI views of state changes.
+    /// - Note: Exclusively operates on the main actor to ensure thread safety, making it suitable for
+    ///         UI-related tasks in declarative SwiftUI workflows.
     @MainActor
     @Observable
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
@@ -24,39 +25,44 @@ extension Async {
         
         /// The error encountered during the task, if any.
         ///
-        /// This property is set when the task encounters an error, either through the custom `errorMapper`
-        /// or directly from the task itself.
+        /// This property is updated when the task encounters an error. It may be set by the custom
+        /// `errorMapper` or directly by the task itself.
         public private(set) var error: E?
         
         /// The result produced by the asynchronous task, if available.
         ///
-        /// This property holds the task's output upon successful completion.
+        /// Holds the task's output upon successful completion. If the task fails or is cancelled,
+        /// this property will remain `nil`.
         public private(set) var value: V?
         
         /// The current state of the task.
         ///
-        /// Indicates whether the task is idle, active, or completed. This property can be used to track
-        /// the task’s progress and update the UI accordingly.
+        /// Indicates whether the task is idle, active, or completed. This property is reactive
+        /// and can be used to update the UI based on the task’s progress.
         public private(set) var state: Async.State = .idle
         
         /// A custom error handler for mapping generic errors to the specified error type `E`.
         ///
-        /// This optional closure allows customization of error handling logic, enabling context-specific transformations.
+        /// This optional closure allows context-specific transformations of errors encountered
+        /// during task execution.
         public let errorMapper: ErrorMapper<E>?
         
         // MARK: - Private Properties
         
         /// A reference to the currently running task.
         ///
-        /// This property enables cancellation and lifecycle management of the asynchronous task.
+        /// This property manages the lifecycle of the task, enabling cancellation and cleanup upon completion.
         private var task: Task<Void, Never>?
         
         // MARK: - Initialization
         
         /// Initializes a new instance of `ObservableSingleTask`.
         ///
-        /// - Parameter errorMapper: A closure for custom error handling. Defaults to `nil`.
-        public init(errorMapper: ErrorMapper<E>? = nil) {
+        /// - Parameter errorMapper: A closure for custom error handling, allowing transformation of
+        ///   errors into the specified error type `E`. Defaults to `nil`.
+        public init(
+            errorMapper: ErrorMapper<E>? = nil
+        ) {
             self.errorMapper = errorMapper
         }
         
@@ -64,8 +70,8 @@ extension Async {
                 
         /// Cancels the currently running task, if any.
         ///
-        /// Stops the task immediately, clears its reference, and updates the state to `.idle`.
-        /// Safe to call even if no task is currently running.
+        /// Safely stops the task, clears its reference, and updates the state to `.idle`. If no task
+        /// is running, calling this method has no effect.
         public func cancel() {
             if let task {
                 task.cancel()
@@ -76,17 +82,22 @@ extension Async {
         
         /// Manages the lifecycle of an asynchronous task.
         ///
-        /// Centralizes task execution, state updates, and error handling. Automatically
-        /// cleans up and transitions the task's state after completion or failure.
+        /// Centralizes task execution, state management, and error handling. Automatically transitions
+        /// the task’s state upon completion or failure.
         ///
-        /// - Parameter operation: A closure that performs an asynchronous task and returns
-        ///   a value of type `V`. The closure can throw an error if the task fails.
-        public func startTask(_ operation: @escaping Producer<V>) {
+        /// - Parameters:
+        ///   - priority: The priority of the task, influencing its execution order. Defaults to `nil`.
+        ///   - operation: A closure that performs the asynchronous task and returns a value of type `V`.
+        ///     The closure can throw an error if the task fails.
+        public func startTask(
+            priority: TaskPriority? = nil,
+            _ operation: @escaping Producer<V>
+        ) {
             cancel()
             clean()
             setState(.active)
 
-            task = Task<Void, Never> { [weak self] in
+            task = Task<Void, Never>(priority: priority) { [weak self] in
                 defer {
                     self?.setState(.idle)
                     self?.task = nil
@@ -101,14 +112,13 @@ extension Async {
        
         // MARK: - Private Methods
         
-        /// Clears specified properties of the asynchronous task.
+        /// Clears the specified properties of the asynchronous task.
         ///
-        /// This method allows selective clearing of task properties, such as `error` or `value`.
-        /// By default, both `error` and `value` properties are cleared unless specific properties
-        /// are specified in the `fields` parameter.
+        /// Allows selective clearing of task properties such as `error` or `value`. By default, it
+        /// clears both the `error` and `value` properties unless specific properties are provided.
         ///
-        /// - Parameter fields: An array of `TaskProperty` values specifying which properties
-        ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
+        /// - Parameter fields: An array of `TaskProperty` values specifying which properties to clear.
+        ///   Defaults to `[.error, .value]`.
         private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
             for field in fields {
                 switch field {
@@ -119,19 +129,22 @@ extension Async {
         }
         
         /// Resets the `error` property of the asynchronous task.
+        ///
+        /// Clears any error information stored in the task.
         private func resetError() {
             self.error = nil
         }
 
         /// Resets the `value` property of the asynchronous task.
+        ///
+        /// Clears any result produced by the task.
         private func resetValue() {
             self.value = nil
         }
         
-       
-        /// Updates the task state.
+        /// Updates the task’s state.
         ///
-        /// - Parameter value: The new state to assign.
+        /// - Parameter value: The new state to set for the task.
         private func setState(_ value: State) {
             state = value
         }

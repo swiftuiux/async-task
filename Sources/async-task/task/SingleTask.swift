@@ -1,22 +1,20 @@
 //
 //  SingleTask.swift
 //
-//
 //  Created by Igor Shelopaev on 27.11.24.
 //
 
 import SwiftUI
 
-
 extension Async {
     /// A view model that manages a cancellable asynchronous task.
     ///
-    /// This view model handles the lifecycle of a single asynchronous task in a SwiftUI environment.
-    /// It provides features such as task cancellation, error handling, and state management, making
-    /// it easier to integrate asynchronous operations into declarative UI workflows.
+    /// This view model simplifies the lifecycle management of a single asynchronous task in a SwiftUI environment.
+    /// It includes functionality for task cancellation, error handling, and state management, making it easier
+    /// to integrate declarative workflows into asynchronous operations.
     ///
-    /// - Note: The `@MainActor` attribute ensures all updates to properties and method calls occur on
-    ///         the main thread, making it safe for use with SwiftUI.
+    /// - Note: The `@MainActor` attribute ensures thread safety, as all updates to properties and method calls
+    ///         occur on the main thread, making it safe for use in UI-related contexts.
     @MainActor
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     public final class SingleTask<V: Sendable, E: Error>: ObservableObject, IAsyncTask {
@@ -25,34 +23,41 @@ extension Async {
         
         /// The error encountered during the task, if any.
         ///
-        /// This property is updated whenever an error occurs during task execution.
+        /// Updated whenever an error occurs during task execution. It can be customized using
+        /// an optional error mapper provided at initialization.
         @Published public private(set) var error: E?
         
         /// The result produced by the asynchronous task, if available.
         ///
-        /// This property holds the value produced by a successfully completed task.
+        /// Holds the value produced by a successfully completed task. If the task fails
+        /// or has not yet completed, this property will be `nil`.
         @Published public private(set) var value: V?
         
         /// The current state of the task.
         ///
-        /// Indicates whether the task is currently active or idle.
+        /// Indicates whether the task is idle, active, or completed. This property helps track the
+        /// task's lifecycle and can be used to trigger UI updates or other logic based on task status.
         @Published public private(set) var state: Async.State = .idle
         
-        /// The custom error handler used to process errors during task execution.
+        /// A custom error mapper used to process and transform errors encountered during task execution.
+        ///
+        /// Allows for the customization of error handling logic, mapping generic errors into a
+        /// specified type of `E`. Defaults to `nil` if not provided.
         public let errorMapper: ErrorMapper<E>?
         
         // MARK: - Private Properties
         
         /// The currently running task, if any.
         ///
-        /// This property holds a reference to the task to enable cancellation and lifecycle management.
+        /// Holds a reference to the running task, enabling cancellation and lifecycle management.
         private var task: Task<Void, Never>?
         
         // MARK: - Initialization
         
         /// Creates a new instance of `SingleTask`.
         ///
-        /// - Parameter errorMapper: A closure for custom error handling. Defaults to `nil`.
+        /// - Parameter errorMapper: A closure for custom error handling, allowing for the transformation of
+        ///   errors encountered during task execution. Defaults to `nil`.
         public init(errorMapper: ErrorMapper<E>? = nil) {
             self.errorMapper = errorMapper
         }
@@ -61,7 +66,8 @@ extension Async {
                
         /// Cancels the currently running task, if any.
         ///
-        /// This method stops the task, resets its reference, and updates the state to `.idle`.
+        /// This method stops the task immediately, resets the task reference, and updates the state to `.idle`.
+        /// If no task is running, this method has no effect.
         public func cancel() {
             if let task {
                 task.cancel()
@@ -70,27 +76,27 @@ extension Async {
             setState(.idle)
         }
        
-        // MARK: - Private Methods
-        
-        /// Executes an asynchronous operation and manages its lifecycle.
+        /// Starts an asynchronous task with the specified operation.
         ///
-        /// This private method centralizes the common functionality for running an asynchronous task.
-        /// It resets the current state, starts the task, manages errors, and updates the task's state.
+        /// This method initializes an asynchronous task, manages its lifecycle, and handles errors.
+        /// It resets the task state, clears relevant properties, and starts the task.
         ///
-        /// - Parameter operation: A closure that performs an asynchronous task and returns a value
-        ///   of type `V` upon completion. The closure can throw an error if the task fails.
+        /// - Parameters:
+        ///   - priority: The priority of the task, influencing its scheduling. Defaults to `nil`.
+        ///   - operation: A closure that performs an asynchronous task and returns a value of type `V`.
+        ///     The closure can throw an error if the task fails.
         ///
         /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
         ///         UI-related tasks or state changes.
-        @MainActor
-        public func startTask(_ operation: @escaping Producer<V>) {
-            
+        public func startTask(
+            priority: TaskPriority? = nil,
+            _ operation: @escaping Producer<V>
+        ) {
             cancel()
             clean()
             setState(.active)
 
-            task = Task<Void, Never> { @MainActor [weak self] in
-                
+            task = Task<Void, Never>(priority: priority) { @MainActor [weak self] in
                 defer {
                     self?.setState(.idle)
                     self?.task = nil
@@ -102,6 +108,8 @@ extension Async {
                 }
             }
         }
+        
+        // MARK: - Private Methods
         
         /// Clears specified properties of the asynchronous task.
         ///
@@ -130,8 +138,11 @@ extension Async {
             self.value = nil
         }
         
+        /// Updates the state of the asynchronous task.
+        ///
+        /// - Parameter value: The new state to set.
         @MainActor
-        private func setState(_ value: State){
+        private func setState(_ value: State) {
             state = value
         }
     }
