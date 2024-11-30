@@ -69,9 +69,6 @@ extension Async {
         // MARK: - Public Methods
                 
         /// Cancels the currently running task, if any.
-        ///
-        /// Safely stops the task, clears its reference, and updates the state to `.idle`. If no task
-        /// is running, calling this method has no effect.
         public func cancel() {
             if let task {
                 task.cancel()
@@ -81,10 +78,6 @@ extension Async {
         }
         
         /// Manages the lifecycle of an asynchronous task.
-        ///
-        /// Centralizes task execution, state management, and error handling. Automatically transitions
-        /// the task’s state upon completion or failure.
-        ///
         /// - Parameters:
         ///   - priority: The priority of the task, influencing its execution order. Defaults to `nil`.
         ///   - operation: A closure that performs the asynchronous task and returns a value of type `V`.
@@ -113,10 +106,6 @@ extension Async {
         // MARK: - Private Methods
         
         /// Clears the specified properties of the asynchronous task.
-        ///
-        /// Allows selective clearing of task properties such as `error` or `value`. By default, it
-        /// clears both the `error` and `value` properties unless specific properties are provided.
-        ///
         /// - Parameter fields: An array of `TaskProperty` values specifying which properties to clear.
         ///   Defaults to `[.error, .value]`.
         private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
@@ -129,15 +118,11 @@ extension Async {
         }
         
         /// Resets the `error` property of the asynchronous task.
-        ///
-        /// Clears any error information stored in the task.
         private func resetError() {
             self.error = nil
         }
 
         /// Resets the `value` property of the asynchronous task.
-        ///
-        /// Clears any result produced by the task.
         private func resetValue() {
             self.value = nil
         }

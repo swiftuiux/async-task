@@ -65,9 +65,6 @@ extension Async {
         // MARK: - Public Methods
                
         /// Cancels the currently running task, if any.
-        ///
-        /// This method stops the task immediately, resets the task reference, and updates the state to `.idle`.
-        /// If no task is running, this method has no effect.
         public func cancel() {
             if let task {
                 task.cancel()
@@ -77,10 +74,6 @@ extension Async {
         }
        
         /// Starts an asynchronous task with the specified operation.
-        ///
-        /// This method initializes an asynchronous task, manages its lifecycle, and handles errors.
-        /// It resets the task state, clears relevant properties, and starts the task.
-        ///
         /// - Parameters:
         ///   - priority: The priority of the task, influencing its scheduling. Defaults to `nil`.
         ///   - operation: A closure that performs an asynchronous task and returns a value of type `V`.
@@ -112,11 +105,6 @@ extension Async {
         // MARK: - Private Methods
         
         /// Clears specified properties of the asynchronous task.
-        ///
-        /// This method allows selective clearing of task properties, such as `error` or `value`.
-        /// By default, both `error` and `value` properties are cleared unless specific properties
-        /// are specified in the `fields` parameter.
-        ///
         /// - Parameter fields: An array of `TaskProperty` values specifying which properties
         ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
         private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
