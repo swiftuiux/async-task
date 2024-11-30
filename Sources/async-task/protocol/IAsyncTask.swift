@@ -2,7 +2,7 @@
 //  IAsyncTask.swift
 //  async-task
 //
-//  Created by Igor on 28.11.24.
+//  Created by Igor Shelopaev on 28.11.24.
 //
 
 import Foundation
