@@ -7,7 +7,10 @@
 
 import SwiftUI
 
+#if compiler(>=5.9) && canImport(Observation)
+
 extension Async {
+    
     /// A view model for managing a cancellable asynchronous task in a SwiftUI environment.
     ///
     /// - Note: Exclusively operates on the main actor to ensure thread safety, making it suitable for
@@ -123,3 +126,5 @@ extension Async {
         }
     }
 }
+
+#endif
