@@ -20,15 +20,9 @@ extension Async {
         // MARK: - Public Properties
         
         /// The error encountered during the task, if any.
-        ///
-        /// This property is updated when the task encounters an error. It may be set by the custom
-        /// `errorMapper` or directly by the task itself.
         public private(set) var error: E?
         
         /// The result produced by the asynchronous task, if available.
-        ///
-        /// Holds the task's output upon successful completion. If the task fails or is cancelled,
-        /// this property will remain `nil`.
         public private(set) var value: V?
         
         /// The current state of the task.
