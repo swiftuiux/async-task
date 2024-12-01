@@ -49,7 +49,7 @@ extension Async {
         /// - Parameter errorMapper: A closure for custom error handling, allowing transformation of
         ///   errors into the specified error type `E`. Defaults to `nil`.
         public init(
-            errorMapper: ErrorMapper<E>? = nil
+            errorMapper: Async.ErrorMapper<ErrorType>? = nil
         ) {
             self.errorMapper = errorMapper
         }

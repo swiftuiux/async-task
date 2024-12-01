@@ -51,6 +51,12 @@ public protocol IAsyncTask: AnyObject, Sendable {
     /// If not provided, errors will not be automatically transformed.
     var errorMapper: Async.ErrorMapper<ErrorType>? { get }
 
+    /// Initializer
+    ///
+    /// - Parameter errorMapper: A closure for custom error handling, allowing transformation of
+    ///   errors into the specified error type `E`. Defaults to `nil`.
+    init(errorMapper: Async.ErrorMapper<ErrorType>?)
+    
     // MARK: - Methods
 
     /// Cancels the currently running task, if any.
