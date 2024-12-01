@@ -10,9 +10,9 @@
 
 Explore real-world examples of how to use this package in SwiftUI:
 
-1. [Async Location Example](https://github.com/swiftuiux/corelocation-manager-tracker-swift-apple-maps-example)
-2. [Replicate Kit Example](https://github.com/swiftuiux/replicate-kit-example)
-
+1. [Async Location](https://github.com/swiftuiux/corelocation-manager-tracker-swift-apple-maps-example)
+2. [Replicate Kit](https://github.com/swiftuiux/replicate-kit-example)
+3. [OpenAI AsyncImage](https://github.com/swiftuiux/openai-async-image-swiftui)
 
 ## Overview
 
