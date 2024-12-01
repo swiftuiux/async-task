@@ -10,10 +10,6 @@ import SwiftUI
 extension Async {
     /// A view model for managing a cancellable asynchronous task in a SwiftUI environment.
     ///
-    /// This class provides lifecycle management for a single asynchronous task, including cancellation,
-    /// error handling, and state management. It integrates seamlessly with SwiftUI using `@Observable`
-    /// to notify views about state changes.
-    ///
     /// - Note: Exclusively operates on the main actor to ensure thread safety, making it suitable for
     ///         UI-related tasks in declarative SwiftUI workflows.
     @MainActor
@@ -50,8 +46,6 @@ extension Async {
         // MARK: - Private Properties
         
         /// A reference to the currently running task.
-        ///
-        /// This property manages the lifecycle of the task, enabling cancellation and cleanup upon completion.
         private var task: Task<Void, Never>?
         
         // MARK: - Initialization
