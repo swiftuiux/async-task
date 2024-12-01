@@ -2,7 +2,7 @@
 //  State.swift
 //  async-task
 //
-//  Created by Igor  on 29.11.24.
+//  Created by Igor Shelopaev on 29.11.24.
 //
 
 public extension Async {
