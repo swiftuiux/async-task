@@ -16,7 +16,7 @@ extension Async {
     @Observable
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     public final class ObservableSingleTask<V: Sendable, E: Error>: IAsyncTask {
-        
+         
         // MARK: - Public Properties
         
         /// The error encountered during the task, if any.
@@ -72,7 +72,7 @@ extension Async {
         ///     The closure can throw an error if the task fails.
         public func startTask(
             priority: TaskPriority? = nil,
-            _ operation: @escaping Producer<V>
+            _ operation: @escaping Producer<V?>
         ) {
             cancel()
             clean()

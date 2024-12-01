@@ -74,7 +74,7 @@ public protocol IAsyncTask: AnyObject, Sendable {
     ///   - priority: The priority of the task, which determines its scheduling priority in the system.
     ///   - operation: A closure that performs an asynchronous task and returns
     ///     a value of type `Value` upon completion. The closure can throw an error if the task fails.
-    func start(priority: TaskPriority?, operation: @escaping Async.Producer<Value>)
+    func start(priority: TaskPriority?, operation: @escaping Async.Producer<Value?>)
 
     /// Starts an asynchronous operation with a specified input.
     ///
@@ -86,7 +86,7 @@ public protocol IAsyncTask: AnyObject, Sendable {
     ///   - priority: The priority of the task, which determines its scheduling priority in the system.
     ///   - operation: A closure that takes an input of type `I`, performs an asynchronous task, and
     ///     returns a value of type `Value` upon completion. The closure can throw an error if the task fails.
-    func start<I: Sendable>(with input: I, priority: TaskPriority?, operation: @escaping Async.Mapper<I, Value>)
+    func start<I: Sendable>(with input: I, priority: TaskPriority?, operation: @escaping Async.Mapper<I, Value?>)
     
     /// Executes an asynchronous operation and manages its lifecycle.
     ///
@@ -100,7 +100,7 @@ public protocol IAsyncTask: AnyObject, Sendable {
     ///
     /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
     ///         UI-related tasks or state changes.
-    func startTask(priority: TaskPriority?, _ operation: @escaping Async.Producer<Value>)
+    func startTask(priority: TaskPriority?, _ operation: @escaping Async.Producer<Value?>)
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
@@ -119,7 +119,7 @@ extension IAsyncTask {
     ///
     /// - Note: Ensures all updates occur on the main actor, making it safe for use in UI-related contexts.
     @MainActor
-    public func start(priority: TaskPriority? = nil, operation: @escaping Async.Producer<Value>) {
+    public func start(priority: TaskPriority? = nil, operation: @escaping Async.Producer<Value?>) {
         startTask(priority: priority) {
             try await operation()
         }
@@ -139,7 +139,7 @@ extension IAsyncTask {
     ///   - operation: A closure that takes an input of type `I`, performs an asynchronous task, and
     ///     returns a value of type `Value` upon completion. The closure can throw an error if the task fails.
     @MainActor
-    public func start<I: Sendable>(with input: I, priority: TaskPriority? = nil, operation: @escaping Async.Mapper<I, Value>) {
+    public func start<I: Sendable>(with input: I, priority: TaskPriority? = nil, operation: @escaping Async.Mapper<I, Value?>) {
         startTask(priority: priority) {
             try await operation(input)
         }

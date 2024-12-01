@@ -77,7 +77,7 @@ extension Async {
         ///         UI-related tasks or state changes.
         public func startTask(
             priority: TaskPriority? = nil,
-            _ operation: @escaping Producer<V>
+            _ operation: @escaping Producer<V?>
         ) {
             cancel()
             clean()
