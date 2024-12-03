@@ -60,6 +60,7 @@ extension Async {
         // MARK: - Public Methods
                 
         /// Cancels the currently running task, if any.
+        @MainActor
         public func cancel() {
             if let task {
                 task.cancel()
@@ -68,11 +69,18 @@ extension Async {
             setState(.idle)
         }
         
+        @MainActor
+        public func cancel(with operation: @escaping @Sendable () -> Void) {
+            operation()
+            cancel()
+        }
+        
         /// Manages the lifecycle of an asynchronous task.
         /// - Parameters:
         ///   - priority: The priority of the task, influencing its execution order. Defaults to `nil`.
         ///   - operation: A closure that performs the asynchronous task and returns a value of type `V`.
         ///     The closure can throw an error if the task fails.
+        @MainActor
         public func startTask(
             priority: TaskPriority? = nil,
             _ operation: @escaping Producer<V?>
@@ -99,6 +107,7 @@ extension Async {
         /// Clears the specified properties of the asynchronous task.
         /// - Parameter fields: An array of `TaskProperty` values specifying which properties to clear.
         ///   Defaults to `[.error, .value]`.
+        @MainActor
         private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
             for field in fields {
                 switch field {
@@ -109,11 +118,13 @@ extension Async {
         }
         
         /// Resets the `error` property of the asynchronous task.
+        @MainActor
         private func resetError() {
             self.error = nil
         }
 
         /// Resets the `value` property of the asynchronous task.
+        @MainActor
         private func resetValue() {
             self.value = nil
         }
@@ -121,6 +132,7 @@ extension Async {
         /// Updates the task’s state.
         ///
         /// - Parameter value: The new state to set for the task.
+        @MainActor
         private func setState(_ value: State) {
             state = value
         }

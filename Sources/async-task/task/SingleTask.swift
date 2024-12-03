@@ -60,12 +60,19 @@ extension Async {
         // MARK: - Public Methods
                
         /// Cancels the currently running task, if any.
+        @MainActor
         public func cancel() {
             if let task {
                 task.cancel()
                 self.task = nil
             }
             setState(.idle)
+        }
+        
+        @MainActor
+        public func cancel(with operation: @escaping @Sendable () -> Void) {
+            operation()
+            cancel()
         }
        
         /// Starts an asynchronous task with the specified operation.
@@ -76,6 +83,7 @@ extension Async {
         ///
         /// - Note: Ensures thread safety by running on the main actor, making it suitable for managing
         ///         UI-related tasks or state changes.
+        @MainActor
         public func startTask(
             priority: TaskPriority? = nil,
             _ operation: @escaping Producer<V?>
@@ -102,6 +110,7 @@ extension Async {
         /// Clears specified properties of the asynchronous task.
         /// - Parameter fields: An array of `TaskProperty` values specifying which properties
         ///   to clear. The default is `[.error, .value]`, which clears both the `error` and `value` properties.
+        @MainActor
         private func clean(fields: [Async.TaskProperty] = [.error, .value]) {
             for field in fields {
                 switch field {
@@ -112,11 +121,13 @@ extension Async {
         }
         
         /// Resets the `error` property of the asynchronous task.
+        @MainActor
         private func resetError() {
             self.error = nil
         }
 
         /// Resets the `value` property of the asynchronous task.
+        @MainActor
         private func resetValue() {
             self.value = nil
         }
