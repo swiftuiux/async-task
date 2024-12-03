@@ -69,12 +69,6 @@ extension Async {
             setState(.idle)
         }
         
-        @MainActor
-        public func cancel(with operation: @escaping @Sendable () -> Void) {
-            operation()
-            cancel()
-        }
-        
         /// Manages the lifecycle of an asynchronous task.
         /// - Parameters:
         ///   - priority: The priority of the task, influencing its execution order. Defaults to `nil`.
