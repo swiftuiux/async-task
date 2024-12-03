@@ -68,12 +68,6 @@ extension Async {
             }
             setState(.idle)
         }
-        
-        @MainActor
-        public func cancel(with operation: @escaping @Sendable () -> Void) {
-            operation()
-            cancel()
-        }
        
         /// Starts an asynchronous task with the specified operation.
         /// - Parameters:

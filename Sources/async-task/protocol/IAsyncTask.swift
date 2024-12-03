@@ -64,8 +64,6 @@ public protocol IAsyncTask: AnyObject, Sendable {
     /// This method stops the task immediately, resets the task reference, and updates the state to `.idle`.
     /// If no task is running, calling this method has no effect.
     func cancel()
-    
-    func cancel(with operation : @escaping @Sendable () -> Void)
 
     /// Starts an asynchronous operation without requiring input.
     ///
