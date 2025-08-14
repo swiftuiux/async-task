@@ -18,7 +18,11 @@ extension Async {
     ///         occur on the main thread, making it safe for use in UI-related contexts.
     @MainActor
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    public final class SingleTask<V: Sendable, E: Error>: ObservableObject, IAsyncTask {
+    public final class SingleTask<V: Sendable, E: Error & Sendable>: ObservableObject, IAsyncTask {
+        
+        public typealias Value = V
+        
+        public typealias ErrorType = E
         
         // MARK: - Public Properties
         

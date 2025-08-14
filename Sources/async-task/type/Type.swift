@@ -5,13 +5,13 @@
 //  Created by Igor Shelopaev on 29.11.24.
 //
 
-public extension Async {
+extension Async {
     
     /// A closure type for handling errors.
     ///
-    /// This closure processes an optional `Error` and returns an optional custom error of type `E`.
+    /// This closure processes an `Error` and returns an optional custom error of type `E`.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    typealias ErrorMapper<E: Error & Sendable> = @Sendable (Error?) -> E?
+    public typealias ErrorMapper<E: Error & Sendable> = @Sendable (Error) -> E?
     
     /// A closure that asynchronously transforms an input of type `Input` into an output of type `Output`.
     ///
@@ -25,7 +25,7 @@ public extension Async {
     ///         when used in Swift's structured concurrency model.
     /// - Throws: An error if the asynchronous operation cannot complete successfully.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    typealias Mapper<Input: Sendable, Output: Sendable> = @Sendable (Input) async throws -> Output
+    public typealias Mapper<Input: Sendable, Output: Sendable> = @Sendable (Input) async throws -> Output
 
     /// A closure that asynchronously produces an output of type `Output` without requiring any input.
     ///
@@ -38,5 +38,5 @@ public extension Async {
     ///         when used in Swift's structured concurrency model.
     /// - Throws: An error if the asynchronous operation cannot complete successfully.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    typealias Producer<Output: Sendable> = @Sendable () async throws -> Output
+    public typealias Producer<Output: Sendable> = @Sendable () async throws -> Output
 }

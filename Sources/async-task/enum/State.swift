@@ -5,7 +5,7 @@
 //  Created by Igor Shelopaev on 29.11.24.
 //
 
-public extension Async {
+extension Async {
     /// Represents the current state of an asynchronous operation.
     ///
     /// Use the `State` enum to track whether an asynchronous task is idle or actively running.
@@ -15,7 +15,7 @@ public extension Async {
     ///   - `idle`: Indicates that no task is currently running.
     ///   - `active`: Indicates that a task is currently in progress.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    enum State {
+    public enum State: Sendable, Hashable {
         /// No task is currently running.
         case idle
         

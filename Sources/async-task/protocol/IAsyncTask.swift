@@ -17,7 +17,7 @@ import Foundation
 ///         ensuring thread safety for UI-related operations.
 @MainActor
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-public protocol IAsyncTask: AnyObject, Sendable {
+public protocol IAsyncTask: AnyObject{
     
     /// The type of the value produced by the asynchronous task.
     associatedtype Value: Sendable
@@ -90,8 +90,7 @@ public protocol IAsyncTask: AnyObject, Sendable {
     
     /// Executes an asynchronous operation and manages its lifecycle.
     ///
-    /// This private method centralizes the common functionality for running an asynchronous task.
-    /// It resets the current state, starts the task, manages errors, and updates the task's state.
+    /// This requirement centralizes the common functionality for running an asynchronous task.
     ///
     /// - Parameters:
     ///   - priority: The priority of the task, which determines its scheduling priority in the system.

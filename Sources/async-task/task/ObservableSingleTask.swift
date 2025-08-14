@@ -8,6 +8,7 @@
 import SwiftUI
 
 #if compiler(>=5.9) && canImport(Observation)
+import Observation
 
 extension Async {
     
@@ -18,8 +19,12 @@ extension Async {
     @MainActor
     @Observable
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
-    public final class ObservableSingleTask<V: Sendable, E: Error>: IAsyncTask {
-         
+    public final class ObservableSingleTask<V: Sendable, E: Error & Sendable>: IAsyncTask {
+        
+        public typealias Value = V
+        
+        public typealias ErrorType = E
+        
         // MARK: - Public Properties
         
         /// The error encountered during the task, if any.
@@ -52,10 +57,10 @@ extension Async {
         /// - Parameter errorMapper: A closure for custom error handling, allowing transformation of
         ///   errors into the specified error type `E`. Defaults to `nil`.
         public init(
-            errorMapper: Async.ErrorMapper<ErrorType>? = nil
+            errorMapper: ErrorMapper<E>? = nil
         ) {
             self.errorMapper = errorMapper
-        }
+        }        
         
         // MARK: - Public Methods
                 
@@ -83,7 +88,7 @@ extension Async {
             clean()
             setState(.active)
 
-            task = Task<Void, Never>(priority: priority) { [weak self] in
+            task = Task<Void, Never>(priority: priority) { @MainActor [weak self] in
                 defer {
                     self?.setState(.idle)
                     self?.task = nil
